@@ -1,19 +1,31 @@
 <script setup>
 import { computed } from 'vue'
 import { useNav } from '@slidev/client'
-
-defineProps({
-  sectionIndex: { type: Number, default: 0 },
-})
+import { slides } from '#slidev/slides'
 
 const { currentSlideNo, go } = useNav()
 
-const chapters = [
-  { label: '簡介', start: 2 },
-  { label: '學術應用', start: 5 },
-  { label: '實用技巧', start: 15 },
-  { label: '開始使用', start: 18 },
-]
+/** Dynamically compute chapters from h1 slides (skip slide 1 = cover) */
+const chapters = computed(() => {
+  const allSlides = slides.value
+  if (!allSlides) return []
+
+  const h1Slides = []
+  for (const slide of allSlides) {
+    const info = slide.meta?.slide
+    if (!info) continue
+    if (info.level === 1 && slide.no > 1) {
+      h1Slides.push({ label: info.title || '', start: slide.no })
+    }
+  }
+
+  return h1Slides
+})
+
+/** Auto-detect which chapter this section slide belongs to */
+const sectionIndex = computed(() => {
+  return chapters.value.findIndex(ch => ch.start === currentSlideNo.value)
+})
 </script>
 
 <template>
@@ -107,6 +119,5 @@ const chapters = [
   min-width: 28px;
   text-align: right;
 }
-
 
 </style>

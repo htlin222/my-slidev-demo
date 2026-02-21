@@ -22,7 +22,6 @@ email: demo@slidev.dev
 
 ---
 layout: chapter
-sectionIndex: 0
 ---
 
 # 簡介
@@ -82,7 +81,6 @@ sectionIndex: 0
 
 ---
 layout: chapter
-sectionIndex: 1
 ---
 
 # 學術應用
@@ -348,7 +346,6 @@ PDF 匯出需安裝 `playwright-chromium`：`pnpm add -D playwright-chromium`
 
 ---
 layout: chapter
-sectionIndex: 2
 ---
 
 # 實用技巧

@@ -1,33 +1,55 @@
 <script setup>
 import { computed } from 'vue'
 import { useNav } from '@slidev/client'
+import { slides } from '#slidev/slides'
 
 const { currentSlideNo, go } = useNav()
 
-const chapters = [
-  { label: '簡介', start: 2, end: 4 },
-  { label: '學術應用', start: 5, end: 14 },
-  { label: '實用技巧', start: 15, end: 17 },
-  { label: '開始使用', start: 18, end: 18 },
-]
+/** Dynamically compute chapters from h1 slides (skip slide 1 = cover) */
+const chapters = computed(() => {
+  const allSlides = slides.value
+  if (!allSlides) return []
 
+  const h1Slides = []
+  for (const slide of allSlides) {
+    const info = slide.meta?.slide
+    if (!info) continue
+    if (info.level === 1 && slide.no > 1) {
+      h1Slides.push({ label: info.title || '', start: slide.no })
+    }
+  }
+
+  const total = allSlides.length
+  return h1Slides.map((ch, i) => ({
+    ...ch,
+    end: i < h1Slides.length - 1 ? h1Slides[i + 1].start - 1 : total,
+  }))
+})
+
+/** Compute which chapter the current slide belongs to */
 const activeChapterIndex = computed(() => {
   const page = currentSlideNo.value
-  for (let i = chapters.length - 1; i >= 0; i--) {
-    if (page >= chapters[i].start && page <= chapters[i].end) {
+  const chs = chapters.value
+  for (let i = chs.length - 1; i >= 0; i--) {
+    if (page >= chs[i].start && page <= chs[i].end) {
       return i
     }
   }
   return -1
 })
 
-/** Hide the nav bar on cover and section divider slides */
-const navHiddenSlides = new Set([1, 2, 5, 15])
-const navVisible = computed(() => !navHiddenSlides.has(currentSlideNo.value))
+/** Hide nav bar on cover (slide 1) and chapter divider slides */
+const navVisible = computed(() => {
+  if (currentSlideNo.value === 1) return false
+  const allSlides = slides.value
+  if (!allSlides) return true
+  const current = allSlides.find(s => s.no === currentSlideNo.value)
+  const fm = current?.meta?.slide?.frontmatter
+  return fm?.layout !== 'chapter'
+})
 
 /** Hide bottom decorations only on cover slide */
-const bottomHiddenSlides = new Set([1])
-const bottomVisible = computed(() => !bottomHiddenSlides.has(currentSlideNo.value))
+const bottomVisible = computed(() => currentSlideNo.value !== 1)
 
 function navigateTo(slideNo) {
   go(slideNo)
