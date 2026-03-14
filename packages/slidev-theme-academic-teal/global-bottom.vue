@@ -45,16 +45,3 @@ const h2RefText = computed(() => h2RefMap.value[currentSlideNo.value] || '')
   </div>
 </template>
 
-<style scoped>
-.h2-ref-overlay {
-  position: absolute;
-  top: 24px;
-  left: 3.5rem;
-  font-size: 12px;
-  color: #999;
-  font-weight: 400;
-  font-family: 'Source Sans Pro', sans-serif;
-  pointer-events: none;
-  z-index: 10;
-}
-</style>

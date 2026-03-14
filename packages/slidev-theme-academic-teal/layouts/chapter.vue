@@ -1,39 +1,38 @@
 <script setup>
-import { computed } from 'vue'
-import { useNav } from '@slidev/client'
-import { slides } from '#slidev/slides'
+import { computed } from "vue";
+import { useNav, useSlideContext } from "@slidev/client";
+import { slides } from "#slidev/slides";
 
-const { currentSlideNo, go } = useNav()
+const { go } = useNav();
+const { $page } = useSlideContext();
 
 /** Dynamically compute chapters from h1 slides (skip slide 1 = cover) */
 const chapters = computed(() => {
-  const allSlides = slides.value
-  if (!allSlides) return []
+  const allSlides = slides.value;
+  if (!allSlides) return [];
 
-  const h1Slides = []
+  const h1Slides = [];
   for (const slide of allSlides) {
-    const info = slide.meta?.slide
-    if (!info) continue
+    const info = slide.meta?.slide;
+    if (!info) continue;
     if (info.level === 1 && slide.no > 1) {
-      h1Slides.push({ label: info.title || '', start: slide.no })
+      h1Slides.push({ label: info.title || "", start: slide.no });
     }
   }
 
-  return h1Slides
-})
+  return h1Slides;
+});
 
-/** Auto-detect which chapter this section slide belongs to */
+/** Use injected $page (stable per-slide) instead of reactive currentSlideNo to prevent shrink-before-fade */
 const sectionIndex = computed(() => {
-  return chapters.value.findIndex(ch => ch.start === currentSlideNo.value)
-})
+  return chapters.value.findIndex((ch) => ch.start === $page.value);
+});
 </script>
 
 <template>
   <div class="section-layout">
     <!-- Top-left: section label -->
-    <div class="section-label">
-      Section: {{ sectionIndex + 1 }}
-    </div>
+    <div class="section-label">Section: {{ sectionIndex + 1 }}</div>
 
     <!-- Main content area with chapter list -->
     <div class="section-content">
@@ -49,7 +48,6 @@ const sectionIndex = computed(() => {
         </li>
       </ol>
     </div>
-
   </div>
 </template>
 
@@ -59,7 +57,7 @@ const sectionIndex = computed(() => {
   inset: 0;
   background: #fff;
   overflow: hidden;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: "Source Sans Pro", sans-serif;
 }
 
 /* Section label top-left */
@@ -67,7 +65,7 @@ const sectionIndex = computed(() => {
   position: absolute;
   top: 24px;
   left: 40px;
-  background: #3D6869;
+  background: #3d6869;
   color: #fff;
   font-weight: 700;
   font-size: 13px;
@@ -101,7 +99,10 @@ const sectionIndex = computed(() => {
   color: #b0b0b0;
   font-size: 20px;
   font-weight: 400;
-  transition: color 0.2s;
+  transition:
+    color 0.2s,
+    font-size 0.2s,
+    font-weight 0.2s;
   cursor: pointer;
 }
 
@@ -110,7 +111,7 @@ const sectionIndex = computed(() => {
 }
 
 .chapter-item.active {
-  color: #3D6869;
+  color: #3d6869;
   font-size: 28px;
   font-weight: 700;
 }
@@ -119,5 +120,4 @@ const sectionIndex = computed(() => {
   min-width: 28px;
   text-align: right;
 }
-
 </style>
