@@ -1,9 +1,10 @@
 <script setup>
 import { computed } from 'vue'
-import { useNav } from '@slidev/client'
+import { useNav, useSlideContext } from '@slidev/client'
 import { slides } from '#slidev/slides'
 
-const { currentSlideNo, go } = useNav()
+const { go } = useNav()
+const { $page } = useSlideContext()
 
 /** Dynamically compute chapters from h1 slides (skip slide 1 = cover) */
 const chapters = computed(() => {
@@ -22,9 +23,9 @@ const chapters = computed(() => {
   return h1Slides
 })
 
-/** Auto-detect which chapter this section slide belongs to */
+/** Use injected $page (stable per-slide) instead of reactive currentSlideNo to prevent shrink-before-fade */
 const sectionIndex = computed(() => {
-  return chapters.value.findIndex(ch => ch.start === currentSlideNo.value)
+  return chapters.value.findIndex(ch => ch.start === $page.value)
 })
 </script>
 
@@ -101,7 +102,10 @@ const sectionIndex = computed(() => {
   color: #b0b0b0;
   font-size: 20px;
   font-weight: 400;
-  transition: color 0.2s;
+  transition:
+    color 0.2s,
+    font-size 0.2s,
+    font-weight 0.2s;
   cursor: pointer;
 }
 

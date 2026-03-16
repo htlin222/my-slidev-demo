@@ -265,6 +265,44 @@ graph TD
 
 ---
 
+### 學術應用：數據圖表視覺化
+
+使用 vue-chartjs 在投影片中直接嵌入互動式圖表
+
+<div class="grid grid-cols-2 gap-4">
+<div>
+
+<ChartBar
+  :labels="['Logistic', 'RF', 'SVM', 'XGBoost']"
+  :datasets="[
+    { label: 'AUC', data: [0.72, 0.85, 0.81, 0.91], backgroundColor: ['#8FC1C0', '#5B9A9C', '#3D6869', '#2A4A4B'] }
+  ]"
+  title="模型效能比較"
+/>
+
+</div>
+<div>
+
+<ChartRadar
+  :labels="['Precision', 'Recall', 'F1', 'AUC', 'Speed']"
+  :datasets="[
+    { label: 'XGBoost', data: [88, 92, 90, 91, 70] },
+    { label: 'Random Forest', data: [82, 85, 83, 85, 85] }
+  ]"
+  title="模型多維比較"
+/>
+
+</div>
+</div>
+
+<div class="mt-2 text-sm opacity-70">
+
+使用 `<ChartBar>` 、 `<ChartLine>` 、 `<ChartPie>` 、 `<ChartRadar>` 等元件，透過 props 傳入資料即可
+
+</div>
+
+---
+
 ## 學術應用四：逐步揭示與動畫
 
 控制資訊呈現的節奏，引導聽眾思考
